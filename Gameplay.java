@@ -62,11 +62,13 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 		g.setColor(Color.magenta);
 		g.fillOval(ballposX, ballposY, 20, 20);	
 		
+		/*
 		if(play == false) {
 		g.setColor(Color.darkGray);
 		g.setFont(new Font("serif", Font.BOLD, 40));
 		g.drawString("Press Enter to start", 190, 280);
 		}
+		*/
 		
 		if(totalBricks <= 0) {
 			play = false;
