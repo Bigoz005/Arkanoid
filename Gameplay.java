@@ -1,28 +1,32 @@
-package Arkanoid;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.Timer;
+import java.util.Random;
 
 public class Gameplay extends JPanel implements KeyListener, ActionListener{
 
+	private static int MAX_RAND = 3;
 	private boolean play = false;
 	private boolean isKeyRight;
 	private boolean isKeyLeft;
 	private int score = 0;
-	
+
 	private int totalBricks = 21;
 	
 	private Timer timer;
-	private int delay = 5;
+	private int delay = 8;
 	
 	private int playerX = 310;
 	
+	Random rand = new Random();	
+	private int r1;
+	private int r2;
+	private int randomnegative = rand.nextInt(1);
 	private int ballposX = 350;
 	private int ballposY = 350;
-	private int ballXdir = -3;	//	stworzyc losowe liczby ujemne <-4,-1>
-	private int ballYdir = -3;	//	stworzyc losowe liczby ujemne <-4,-1>
+	private int ballXdir;
+	private int ballYdir;	
 	
 	private MapGenerator map;
 	
@@ -44,7 +48,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 		map.draw((Graphics2D)g);
 		
 		//borders
-		g.setColor(Color.black);
+		g.setColor(Color.darkGray);
 		g.fillRect(0, 0, 3, 592);
 		g.fillRect(0, 0, 692, 3);
 		g.fillRect(691, 0, 3, 592);
@@ -52,7 +56,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 		//scores
 		g.setColor(Color.darkGray);
 		g.setFont(new Font("serif", Font.BOLD, 25));
-		g.drawString("Scores:"+score, 560, 30);
+		g.drawString("Scores:"+score, 510, 30);
 		
 		//the paddle
 		g.setColor(Color.darkGray);
@@ -61,14 +65,6 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 		// the ball
 		g.setColor(Color.magenta);
 		g.fillOval(ballposX, ballposY, 20, 20);	
-		
-		/*
-		if(play == false) {
-		g.setColor(Color.darkGray);
-		g.setFont(new Font("serif", Font.BOLD, 40));
-		g.drawString("Press Enter to start", 190, 280);
-		}
-		*/
 		
 		if(totalBricks <= 0) {
 			play = false;
@@ -101,6 +97,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		timer.start();
+		
 		if(play) {
 			if(new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(playerX, 550, 100,8))){
 				ballYdir = -ballYdir;
@@ -136,14 +133,14 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 			}
 			
 			if (isKeyRight) {
-				if(playerX >=600) {
-					playerX = 600;
+				if(playerX >=590) {
+					playerX = 590;
 				}else {
 					moveRight();
 				}
 			}else if (isKeyLeft) {
 				if(playerX < 10) {
-					playerX = 10;
+					playerX = 8;
 				}else {
 					moveLeft();
 				}
@@ -192,11 +189,46 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 		 	
 		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 		 if(!play) {
+
+  			 play = true;
+ 			 r1 = rand.nextInt(MAX_RAND +2);
+			 r2 = rand.nextInt(MAX_RAND +2);
+			 randomnegative = rand.nextInt(1);
+			 ballposX = 350;
+			 ballposY = 350;
+			 if(randomnegative == 1){
+				if(r1==0){r1++;}
+				 ballXdir = r1;
+			 }else{
+				if(r1==0){r1--;}
+				ballXdir = r1;
+			 };				
+			 ballYdir = -r2-1;
+			 playerX = 310;
+			 score = 0;
+			 totalBricks = 21;
+			 map = new MapGenerator(3, 7);
+			 
+			 repaint();
+		 }
+		}
+		if(e.getKeyCode() == KeyEvent.VK_UP) {
+		 if(play) {
+			 play = true;
+			 r1 = rand.nextInt(MAX_RAND +2);
+			 r2 = rand.nextInt(MAX_RAND +2);
+			 randomnegative = rand.nextInt(1);
 			 play = true;
 			 ballposX = 350;
 			 ballposY = 350;
-			 ballXdir = -1;
-			 ballYdir = -2;
+			 if(randomnegative == 1){
+				if(r1==0){r1++;}
+				ballXdir = r1;
+			 }else{
+				if(r1==0){r1--;}
+				ballXdir = r1;
+			 };	
+			 ballYdir = -r2-1;
 			 playerX = 310;
 			 score = 0;
 			 totalBricks = 21;

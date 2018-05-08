@@ -1,4 +1,3 @@
-package Arkanoid;
 
 import java.awt.*;
 import java.awt.Graphics2D;
