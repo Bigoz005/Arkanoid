@@ -1,3 +1,5 @@
+package Arkanoid;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -15,7 +17,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 	private int totalBricks = 21;
 	
 	private Timer timer;
-	private int delay = 8;
+	private int delay = 7; //szybkosc tworzenia nowej klatki, im mniej tym szybciej
 	
 	private int playerX = 310;
 	
@@ -33,36 +35,36 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 	public Gameplay() {
 		map = new MapGenerator(3,7);
 		addKeyListener(this);
-		setFocusable(true);
-		setFocusTraversalKeysEnabled(false);
+		setFocusable(true); //potrzebne zeby aplikacja skupila sie na odczytywaniu klawiszy
 		timer = new Timer(delay, this);
-		timer.start();
+		timer.start();//rozpoczynanie wysylania actionevent do listener
 	}
 	
 	public void paint(Graphics g) {
-		//background
+		//tlo
 		g.setColor(Color.lightGray);
-		g.fillRect(1,1,692, 592);
+		g.fillRect(1,1,692, 592); // x, y, width, height
 		
 		//map
 		map.draw((Graphics2D)g);
 		
-		//borders
+		//okno
 		g.setColor(Color.darkGray);
 		g.fillRect(0, 0, 3, 592);
 		g.fillRect(0, 0, 692, 3);
 		g.fillRect(691, 0, 3, 592);
+		g.fillRect(0, 590, 694,3);
 		
-		//scores
+		//wynik
 		g.setColor(Color.darkGray);
 		g.setFont(new Font("serif", Font.BOLD, 25));
 		g.drawString("Scores:"+score, 510, 30);
 		
-		//the paddle
+		//paletka
 		g.setColor(Color.darkGray);
 		g.fillRect(playerX, 550, 100, 8);
 		
-		// the ball
+		//pilka
 		g.setColor(Color.magenta);
 		g.fillOval(ballposX, ballposY, 20, 20);	
 		
@@ -78,7 +80,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 			g.drawString("Press Enter to Restart", 230, 350);
 		}
 		
-		if(ballposY > 570) {
+		if(ballposY > 568) {
 			play = false;
 			ballXdir = 0;
 			ballYdir = 0;
@@ -90,7 +92,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 			g.drawString("Press Enter to Restart", 230, 350);
 		}
 		
-		g.dispose();
+		g.dispose(); //zwolnienie zasobów od grafiki
 	}
 	
 
@@ -111,21 +113,19 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 						int brickWidth = map.brickWidth;
 						int brickHeight = map.brickHeight;
 					
-						Rectangle rect = new Rectangle(brickX, brickY, brickWidth, brickHeight);
+						Rectangle brickRect = new Rectangle(brickX, brickY, brickWidth, brickHeight);
 						Rectangle ballRect = new Rectangle(ballposX, ballposY, 20, 20);
-						Rectangle brickRect = rect;
 						
 						if(ballRect.intersects(brickRect)) {
 							map.setBrickValue(0, i, j);
 							totalBricks--;
 							score += 5;
 							
-							if(ballposX + 19 <= brickRect.x || ballposX + 1 >= brickRect.x + brickRect.width) {
+							if(ballposX + 15 <= brickRect.x || ballposX + 1 >= brickRect.x + brickRect.width) {
 								ballXdir = - ballXdir;
 							} else {
 								ballYdir = -ballYdir;
 							}
-							
 							break A;
 						}
 					}
@@ -133,14 +133,14 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 			}
 			
 			if (isKeyRight) {
-				if(playerX >=590) {
-					playerX = 590;
+				if(playerX >=589) {
+					playerX = 589;
 				}else {
 					moveRight();
 				}
 			}else if (isKeyLeft) {
 				if(playerX < 10) {
-					playerX = 8;
+					playerX = 4;
 				}else {
 					moveLeft();
 				}
@@ -148,11 +148,11 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 			
 			ballposX += ballXdir;
 			ballposY += ballYdir;
-			if(ballposX < 0)
+			if(ballposX < 3)
 			{
 				ballXdir = -ballXdir;
 			}
-			if(ballposY < 0)
+			if(ballposY < 3)
 			{
 				ballYdir = -ballYdir;
 			}
@@ -167,24 +167,24 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 	
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
 	}
+	
 	@Override
-	public void keyReleased(KeyEvent e) {
+	public void keyReleased(KeyEvent e) {				//wywolywane, gdy puscimy przycisk
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 			isKeyRight = false;
 		}else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 			isKeyLeft = false;
 		}
-		
 	}
+	
 	@Override
-	public void keyPressed(KeyEvent e) {
+	public void keyPressed(KeyEvent e) {				//wywolywane, gdy wcisniety przycisk
 		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
 			 isKeyRight = true;
 			}
-			if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-				isKeyLeft = true;
+		if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+		     isKeyLeft = true;
 		 	}
 		 	
 		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -196,29 +196,27 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 			 randomnegative = rand.nextInt(1);
 			 ballposX = 350;
 			 ballposY = 350;
-			 if(randomnegative == 1){
+			 if(randomnegative == 1){ //jesli 1 to w prawo
 				if(r1==0){r1++;}
 				 ballXdir = r1;
 			 }else{
-				if(r1==0){r1--;}
+				if(r1==0){r1--;} //jesli 0 to w lewo
 				ballXdir = r1;
 			 };				
-			 ballYdir = -r2-1;
+			 ballYdir = -r2-1; //-1 na wypadek r2=0
 			 playerX = 310;
 			 score = 0;
 			 totalBricks = 21;
 			 map = new MapGenerator(3, 7);
 			 
-			 repaint();
 		 }
 		}
 		if(e.getKeyCode() == KeyEvent.VK_UP) {
 		 if(play) {
-			 play = true;
+			 
 			 r1 = rand.nextInt(MAX_RAND +2);
 			 r2 = rand.nextInt(MAX_RAND +2);
 			 randomnegative = rand.nextInt(1);
-			 play = true;
 			 ballposX = 350;
 			 ballposY = 350;
 			 if(randomnegative == 1){
@@ -234,11 +232,16 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 			 totalBricks = 21;
 			 map = new MapGenerator(3, 7);
 			 
-			 repaint();
 		 }
 		}
+	
+		if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			play=false;
+			setVisible(false);
+			System.exit(0);
 	}
 	
+	}
 	public void moveRight() {
 		play = true;
 		playerX+=5;
